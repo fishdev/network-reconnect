@@ -1,0 +1,149 @@
+#!/bin/bash
+
+getKernelModule() {
+  lspciwireless=`lspci -k | grep -i -A 3 wireless`
+  kernelmoduleline=`echo $lspciwireless | grep -o -P '.{0,0}modules.{0,100}'`
+  kernelmodule=`echo $kernelmoduleline | grep -o -P '.{0,0} .{0,100}'`
+}
+
+getWifiCard() {
+  lspciwireless=`lspci -k | grep -i wireless`
+  wirelesscard=`echo $lspciwireless | grep -o -P '.{0,0}Network controller.{0,100}'`
+}
+
+getWifiInterface() {
+  if ip link | grep -q "wlan0"
+  then
+    wifiinterface=wlan0
+  fi
+  if ip link | grep -q "wlp3s0"
+  then
+    wifiinterface=wlp3s0
+  fi
+  if ip link | grep -q "wlo1"
+  then
+    wifiinterface=wlo1
+  fi
+}
+
+getEthInterface() {
+  if ip link | grep -q "eth0"
+  then
+    ethinterface=eth0
+  fi
+  if ip link | grep -q "enp4s0"
+  then
+    ethinterface=enp4s0
+  fi
+}
+
+wifiInterfaceUp() {
+  ip link set $wifiinterface up
+}
+
+ethInterfaceUp() {
+  ip link set $ethinterface up
+}
+
+getNetworkSSID() {
+  iw dev $wifiinterface scan | grep SSID
+}
+
+wifiConnect() {
+  if [ -z $networkkey ]
+  then
+    iw dev $wifiinterface connect $networkssid
+  else
+    iw dev $wifiinterface connect $networkssid key 0:$networkkey
+  fi
+  dhcpcd $wifiinterface
+}
+
+wifiDisconnect() {
+  killall dhcpcd
+  iw dev $wifiinterface disconnect
+  ip link set $wifiinterface down
+}
+
+ethDisconnect() {
+  ip link set $ethinterface down
+}
+
+infoWifiInterface() {
+  ifconfig $wifiinterface
+}
+
+statusWifiInterface() {
+  iw dev $wifiinterface link
+}
+
+infoEthInterface() {
+  ifconfig $ethinterface
+}
+
+statusEthInterface() {
+  iw dev $ethinterface link
+}
+
+wifiEnable() {
+  echo "[Unit]
+Description=Network Reconnect
+
+[Service]
+ExecStart=/usr/bin/network-reconnect -m $wifiinterface $networkssid $networkkey
+
+[Install]
+WantedBy=multi-user.target" > /etc/systemd/system/network-reconnect.service
+  systemctl enable network-reconnect.service
+}
+
+ethEnable() {
+  echo "[Unit]
+Description=Network Reconnect
+
+[Service]
+ExecStart=/usr/bin/network-reconnect -m $ethinterface
+
+[Install]
+WantedBy=multi-user.target" > /etc/systemd/system/network-reconnect.service
+  systemctl enable network-reconnect.service
+}
+
+case "$1" in
+  --backend)
+    if [ $2 == "checker" ]
+    then
+      wifiinterface=$3
+      networkssid=$4
+      networkkey=$5
+      successcount=$6
+      failcount=$7
+      timetosleep=$8
+      lspciwireless=`lspci -k | grep -i -A 3 wireless`
+      kernelmoduleline=`echo $lspciwireless | grep -o -P '.{0,0}modules.{0,100}'`
+      kernelmodule=`echo $kernelmoduleline | grep -o -P '.{0,0} .{0,100}'`
+      echo "Background daemon stopped due to excessive failure. Trying to restart..." >> /var/log/network-reconnect.log
+      killall dhcpcd
+      iw dev $wifiinterface disconnect
+      ip link set $wifiinterface down
+      modprobe -r $kernelmodule
+      rfkill block all
+      rfkill unblock all
+      modprobe $kernelmodule
+      ip link set $wifiinterface down
+      ip link set $wifiinterface up
+      iw dev $wifiinterface disconnect
+      if [ -z $networkkey ]
+      then
+        iw dev $wifiinterface connect $networkssid
+      else
+        iw dev $wifiinterface connect $networkssid key 0:$networkkey
+      fi
+      killall dhcpcd
+      dhcpcd $wifiinterface
+      network-checker $wifiinterface $networkssid $networkkey $successcount $failcount $timetosleep &
+      echo -e "${green}${bold}Background daemon started.${normal}${nocolor}"
+    fi
+  ;;
+esac
+
