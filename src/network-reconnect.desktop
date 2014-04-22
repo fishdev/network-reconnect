@@ -1,5 +1,5 @@
 [Desktop Entry]
 Name=Network Reconnect
-Icon=/usr/share/network-reconnect/icon.svg
+Icon=nm-device-wireless
 Type=Application
 Exec=network-reconnect-gui
