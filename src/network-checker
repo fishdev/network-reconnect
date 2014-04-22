@@ -1,0 +1,107 @@
+#!/bin/bash
+
+green='\e[0;32m'
+nocolor='\e[0m'
+bold=`tput bold`
+normal=`tput sgr0`
+echo -e "${green}${bold}Background daemon started. Log is located in '/var/log/network-reconnect.log'.${normal}${nocolor}"
+
+wifiinterface=$1
+networkssid=$2
+networkkey=$3
+if [ -z $4 ]
+then
+  successcount=0
+else
+  successcount=$4
+fi
+if [ -z $5 ]
+then
+  failcount=0
+else
+  failcount=$5
+fi
+if [ -z $6 ]
+then
+  timetosleep=10
+else
+  timetosleep=$6
+fi
+
+echo "Network Reconnect Checker started as root in /usr/share/network-reconnect/network-checker" >> /var/log/network-reconnect.log
+
+while true; do
+  if ifconfig $wifiinterface | grep -q 192.168.1.
+  then
+    successcount=`expr $successcount + 1`
+  else
+    echo "["$(date)"]" "Network connectivity failed." >> /var/log/network-reconnect.log
+    killall dhcpcd
+    iw dev $wifiinterface disconnect
+    ip link set $wifiinterface down
+    rfkill block all
+    rfkill unblock all
+    ip link set $wifiinterface up
+    if [ -z $networkkey ]
+    then
+      iw dev $wifiinterface connect $networkssid
+    else
+      iw dev $wifiinterface connect $networkssid key 0:$networkkey
+    fi
+    dhcpcd $wifiinterface
+    if ifconfig $wifiinterface | grep -q 192.168.1
+    then
+      echo "["$(date)"]" "Successfully reconnected." >> /var/log/network-reconnect.log
+    else
+      ip link set $wifiinterface down
+      ip link set $wifiinterface up
+      iw dev $wifiinterface disconnect
+      if [ -z $networkkey ]
+      then
+        iw dev $wifiinterface connect $networkssid
+      else
+        iw dev $wifiinterface connect $networkssid key 0:$networkkey
+      fi
+      killall dhcpcd
+      dhcpcd $wifiinterface
+      failcount=`expr $failcount + 1`
+      if ifconfig $wifiinterface | grep -q 192.168.1
+      then
+        echo "["$(date)"]" "Successfully reconncted." >> /var/log/network-reconnect.log
+      else
+        echo "["$(date)"]" "Cannot reconnect, trying to restart daemon." >> /var/log/network-reconnect.log
+        break
+        fi
+    fi
+    successcount=0
+    failcount=`expr $failcount + 1`
+    sleep 3
+  fi
+  if [ $successcount -ge 10 ]
+  then
+    if [ $timetosleep -ge 90 ]
+    then
+      timetosleep=90
+    else
+      timetosleep=`expr $timetosleep + 1`
+      successcount=0
+    fi
+  fi
+  if [ $failcount -ge 25 ]
+  then
+    echo "Connection is unreliable. Trying to reinitiate..." >> /var/log/network-reconnect.log
+    killall dhcpcd
+    iw dev $wifiiinterface disconnect
+    ip link set $wifiinterface down
+    break
+  fi
+  logfile=$(stat -c%s "/var/log/network-reconnect.log")
+  if [ $logfile -ge 1048576 ]
+  then
+    rm /var/log/network-reconnect.log
+    echo "["$(date)"]" "BEGIN NEW LOG" > /var/log/network-reconnect.log
+  fi
+  sleep $timetosleep
+done
+
+network-reconnect --backend checker $wifiinterface $networkssid $networkkey $successcount $failcount $timetosleep

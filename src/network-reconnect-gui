@@ -1,0 +1,176 @@
+#!/bin/bash
+
+source network-reconnect
+
+welcome=$(zenity --list --title="Network Reconnect" --height=400 --text "Welcome to network-reconnect, a utility designed to make\nmanaging wired and wireless easy. It is not nearly complete\nor feature-complete, and only WEP and standard Ethernet\nare supported at this time. You are currently using the GUI\n(Graphical User Interface). What would you like to do?" --radiolist  --column="Choice" --column="Command" TRUE "Connect to a Network" FALSE "Disconnect From a Network" FALSE "Show Network Information" FALSE "Configure Network Reconnect" FALSE "Go to the Network Reconnect Shell")
+
+if [ "$welcome" == "Connect to a Network" ]
+then
+  connectiontype=$(zenity --list --title="Network Reconnect" --height=400 --text "What type of connection do you want to activate?" --radiolist  --column="Choice" --column="Network Type" TRUE "WiFi" FALSE "Ethernet")
+  if [ "$connectiontype" == "WiFi" ]
+  then
+    getKernelModule
+    modprobe $kernelmodule
+    getWifiInterface
+    if [ -z $wifiinterface ] && [ -z $ethinterface ]
+    then
+      getWifiCard
+      if [ -z $wirelesscard ]
+      then
+        zenity --error --width=300 --height=200 --title="Network Reconnect" --text="No wireless networking interfaces found. It appears that your computer does not have a wireless networking card."
+      else
+        zenity --error --width=300 --height=200 --title="Network Reconnect" --text="No wireless networking interfaces found. Are you sure you have installed the appropriate drivers for your device?"
+      fi
+      exit
+    fi
+    wifiInterfaceUp
+    wifinetworks=`getNetworkSSID`
+    networkssid=$(zenity --entry --title="Network Reconnect" --text="Available wireless networks:\n$wifinetworks\nPlease enter the name of one:")
+    networkkey=$(zenity --password --title="Network Reconnect")
+    wifiConnect
+    if ifconfig $wifiinterface | grep -q 192.168.1.
+    then
+      zenity --info --width=300 height=200 --title="Network Reconnect" --text="Successfully connected to network $networkssid."
+    else
+      zenity --error --width=300 --height=200 --title="Network Reconnect" --text="Connection failed. Perhaps you entered something incorrectly."
+      zenity --question --width=300 --title="Network Reconnect" --text="Would you like to relaunch Network Reconnect to try again?"
+      if [ $? == 0 ]
+      then
+        network-reconnect-gui && exit
+      else
+        exit
+      fi
+    fi
+  else
+    getEthInterface
+    if [ -z $ethinterface ]
+    then
+      zenity --error --width=400 --height=300 --title="Network Reconnect" --text="No ethernet interfaces found."
+      exit
+    fi
+    ethInterfaceUp
+    if ifconfig $ethinterface | grep -q 192.168.1.
+    then
+      zenity --info --width=300 height=200 --title="Network Reconnect" --text="Successfully connected to network."
+    else
+      zenity --error --width=300 --height=200 --title="Network Reconnect" text="Connection failed."
+    fi
+  fi
+fi
+
+if [ "$welcome" == "Disconnect From a Network" ]
+then
+  connectiontype=$(zenity --list --title="Network Reconnect" --height=400 --text "What type of connection do you want to deactivate?" --radiolist  --column="Choice" --column="Network Type" TRUE "All" FALSE "Ethernet" FALSE "WiFi")
+  if [ "$connectiontype" == "All" ]
+  then
+    if ifconfig $wifiinterface | grep 192.168.1.
+    then
+      zenity --error --width=300 --height=200 --title="Network Reconnect" --text="You are already disconnected. Cannot disconnect."
+      exit
+    fi
+    getWifiInterface
+    getEthInterface
+    if [ -z $wifiinterface ] && [ -z $ethinterface ]
+    then
+      getWifiCard
+      if [ -z $wirelesscard ]
+      then
+        zenity --error --width=300 --height=200 --title="Network Reconnect" --text="No networking interfaces found. It appears that your computer does not have a networking controller."
+      else
+        zenity --error --width=300 --height=200 --title="Network Reconnect" --text="No networking interfaces found. Are you sure you have installed the appropriate drivers for your device?"
+      fi
+      exit
+    fi
+    if [ -z $wifiinterface ]
+    then
+      :
+    else
+      wifiDisconnect
+    fi
+    if [ -z $ethinterface ]
+    then
+      :
+    else
+      ethDisconnect
+    fi
+    if ifconfig | grep -q 192.168.1.
+    then
+      zenity --error --width=300 --height=200 --title="Network Reconnect" --text="Disconnection failed."
+    else
+      zenity --info --width=300 height=200 --title="Network Reconnect" --text="Successfully disconnected."
+    fi
+  fi
+  if [ "$connectiontype" == "WiFi" ]
+  then
+    if ifconfig $wifiinterface | grep 192.168.1.
+    then
+      zenity --error --width=300 --height=200 --title="Network Reconnect" --text="You are already disconnected. Cannot disconnect."
+      exit
+    fi
+    getWifiInterface
+    if [ -z $wifiinterface ]
+    then
+      getWifiCard
+      if [ -z $wirelesscard ]
+      then
+        zenity --error --width=300 --height=200 --title="Network Reconnect" --text="No wireless networking interfaces found. It appears that your computer does not have a wireless networking card."
+      else
+        zenity --error --width=300 --height=200 --title="Network Reconnect" --text="No wireless networking interfaces found. Are you sure you have installed the appropriate drivers for your device?"
+      fi
+      exit
+    fi
+    wifiDisconnect
+    if ifconfig | grep -q 192.168.1.
+    then
+      zenity --error --width=300 --height=200 --title="Network Reconnect" --text="Disconnection failed."
+    else
+      zenity --info --width=300 height=200 --title="Network Reconnect" --text="Successfully disconnected."
+    fi
+  fi
+  if [ "$connectiontype" == "Ethernet" ]
+  then
+    getEthInterface
+    if [ -z $ethinterface ]
+    then
+      zenity --error --width=300 --height=200 --title="Network Reconnect" --text="No ethernet interfaces found."
+      exit
+    fi
+    if ifconfig $ethinterface | grep 192.168.1.
+    then
+      zenity --error --width=300 --height=200 --title="Network Reconnect" --text="You are already disconnected. Cannot disconnect."
+      exit
+    fi
+    ethDisconnect
+    if ifconfig | grep -q 192.168.1.
+    then
+      zenity --error --width=300 --height=200 --title="Network Reconnect" --text="Disconnection failed."
+    else
+      zenity --info --width=300 height=200 --title="Network Reconnect" --text="Successfully disconnected."
+    fi
+  fi
+fi
+
+if [ "$welcome" == "Show Network Information" ]
+then
+  showndetails=$(zenity --height=400 width=600 --list --checklist --title="Network Reconnect" --text="What information do you want in your report?" --column="Choice" --column="Information" "Wireless Network Interfaces" FALSE "Wired Network Interfaces" FALSE "Available Wireless Networks" FALSE "Current Wireless Network Status" FALSE "Current Wired Network Status")
+  if echo $showndetails | grep -q "Wireless Network Interfaces"
+  then
+    echo "wifini"
+  fi
+  if echo $showndetails | grep -q "Wired Network Interfaces"
+  then
+    echo "ethni"
+  fi
+  if echo $showndetails | grep -q "Available Wireless Networks"
+  then
+    echo "awn"
+  fi
+  if echo $showndetails | grep -q "Current Wireless Network Status"
+  then
+    echo "cwifins"
+  fi
+  if echo $showndetails | grep -q "Current Wired Network Status"
+  then
+    echo "cethns"
+  fi
+fi
