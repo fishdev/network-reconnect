@@ -1,5 +1,0 @@
-[Desktop Entry]
-Name=Network Reconnect
-Icon=nm-device-wireless
-Type=Application
-Exec=network-reconnect-gui
