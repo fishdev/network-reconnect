@@ -1,5 +1,5 @@
 [Desktop Entry]
 Name=Network Reconnect
-Icon=/usr/share/network-reconnect/icon.svg
+Icon=/usr/share/pixmaps/network-reconnect.png
 Type=Application
 Exec=network-reconnect-gui
