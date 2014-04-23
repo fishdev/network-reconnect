@@ -233,10 +233,10 @@ case "$1" in
     echo "    -i, --interface      start network-reconnect shell interface"
     echo "    -l, --list           list available networking interfaces"
     echo "    -m, --manual         manually connect to network"
-    echo "    -n, --show-networks  show available wireless networks"
     echo "        INTERFACE        network interface to use (required)"
     echo "        NETWORK SSID     name of network to connect to (required for wireless connections)"
     echo "        NETWORK KEY      password for network to connect to (required for wireless connections)"
+    echo "    -n, --show-networks  show available wireless networks"
     echo "    -s, --status         print current network status"
     echo "        INTERFACE        network interface to display (optional)"
   ;;
