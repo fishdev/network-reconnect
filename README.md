@@ -9,7 +9,7 @@ This software utility is currently in active development, and we do not recommen
 
 I first created network-reconnect when my WiFi card was having issues with dropouts and I needed to refresh the connection every time the link went dead. Eventually, I realized that network-reconnect needed to have some sort of interface so I could connect to different networks. The program soon evolved into what you see today. I've decided to share network-reconnect because:
 * many mainstream computers have unreliable network interfaces that could use a simple reconnect script
-* other network connection utilities for Linux/UNIX have a lot of unncessary overhead
+* other network connection utilities for Linux/UNIX have a lot of unnecessary overhead
 
 ### More Information
 
