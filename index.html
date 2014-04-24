@@ -52,8 +52,16 @@
 <ul>
 <li>many mainstream computers have unreliable network interfaces that could use a simple reconnect script</li>
 <li>other network connection utilities for Linux/UNIX have a lot of unnecessary overhead</li>
-</ul><h2>
-<a name="installation-not-complete" class="anchor" href="#installation-not-complete"><span class="octicon octicon-link"></span></a>Installation (not complete)</h2>
+</ul>
+
+<h2></h2><a name="compatibility" class="anchor" href="#compatibility"><span class="octicon octicon-link"></span></a>Compatibility</h2>
+
+<p>You might have noticed that we only mentioned Linux in our introduction above. No Windows or Mac? Why that's insane!</p>
+
+<p>Well, yes, not supporting the two most popular desktop operating systems might seem a bit foolish, network-reconnect is currently only supported on the Linux platform. That's because our program is written entirely in Shell and depends on GNU/Linux userspace utilities that are hard to port to other platforms. If you are really itching to try out network-reconnect, you could attempt to install Mac equivalents of the required software and force-run our scripts...Sorry Windows people, you're completely out of luck right now. If you want to see network-reconnect grow, we strongly encourage you to <a href="https://github.com/fishdev/network-reconnect/pulls">contribute</a>.</a></p>
+
+<h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
 
 <p>So you've downloaded one of our master packages. What next? Follow the instructions below on any <a href="http://en.wikipedia.org/wiki/Linux_distribution">Linux distribution</a> and you'll be set up within minutes.</p>
 
@@ -72,6 +80,27 @@
 
 <h2>
 <a name="getting-started" class="anchor" href="#getting-started"><span class="octicon octicon-link"></span></a>Getting Started</h2>
+
+<p>Really, network-reconnect is quite simple. Basic usage depends solely on the type of network you're trying to connect to:</p>
+
+<ul>
+<li>Wired (Ethernet)</li>
+<li>Wireless (WiFi)</li>
+</ul>
+
+<p>For wired networks, make sure that you have an active Ethernet cable plugged into your computer, then follow these instructions:</p>
+
+<ol>
+<li>Start "Network Reconnect" from your desktop launcher or type <code>network-reconnect-gui</code> in a terminal.
+</li>
+<li>
+
+</li>
+</ol>
+
+<p>If you want to connect to a wireless network, we have a few things to say beforehand. First of all, make sure that your computer has some sort of WiFi adapter (either through a USB dongle or internally). But please note that, unfortunately, network-reconnect is unable to activate WPA-secured networks at this time. That said, you can connect to any unsecured or WEP network by following these quick steps:</p>
+
+
 
 <h2>
 <a name="more-information" class="anchor" href="#more-information"><span class="octicon octicon-link"></span></a>More Information</h2>
