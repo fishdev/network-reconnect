@@ -9,7 +9,7 @@ purple='\e[0;35m'
 nocolor='\e[0m'
 bold=`tput bold`
 normal=`tput sgr0`
-echo -e "${blue}${bold}Network Reconnect is a utility designed to make managing wired and wireless network connections easy. It is not nearly complete or feature-complete, and only WEP and standard Ethernet are supported at this time. You are currently using the CLI (Command-Line Interface).${normal}${nocolor}"
+echo -e "${blue}${bold}Network Reconnect is a utility designed to make managing wired and wireless connections easy. It is not nearly complete or feature-complete, and only WEP and standard Ethernet are supported at this time. You are currently using the CLI (Command-Line Interface).${normal}${nocolor}"
 
 case "$1" in
   -a|--automatic)
