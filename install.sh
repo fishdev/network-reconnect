@@ -46,7 +46,7 @@ then
     exit
   fi
 fi
-if [ "$distribution" == "Fedora" ]
+if [ "$distribution" == "Fedora" ] || [ "$distribution" == "CentOS" ]
 then
   sudo yum install iproute coreutils pciutils grep iputils iw
   if [ -z ${rpm -qa | grep -w "iproute" ] || [ -z ${rpm -qa | grep -w "coreutils" ] || [ -z ${rpm -qa | grep -w "pciutils" ] || [ -z ${rpm -qa | grep -w "grep" ] || [ -z ${rpm -qa | grep -w "iputils" ] || [ -z ${rpm -qa | grep -w "iw" ]
