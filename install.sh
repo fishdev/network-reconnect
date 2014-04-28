@@ -46,6 +46,15 @@ then
     exit
   fi
 fi
+if [ "$distribution" == "Fedora" ]
+then
+  sudo yum install iproute coreutils pciutils grep iputils iw
+  if [ -z ${rpm -qa | grep -w "iproute" ] || [ -z ${rpm -qa | grep -w "coreutils" ] || [ -z ${rpm -qa | grep -w "pciutils" ] || [ -z ${rpm -qa | grep -w "grep" ] || [ -z ${rpm -qa | grep -w "iputils" ] || [ -z ${rpm -qa | grep -w "iw" ]
+  then
+    echo -e "The required dependencies could not be installed. Perhaps you are not connected to the Internet or your system has conflicting programs installed.${normal}${nocolor}"
+    exit
+  fi
+fi
 echo -e "${normal}${nocolor}"
 
 # Move binaries into filesystem
