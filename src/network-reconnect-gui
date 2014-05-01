@@ -153,6 +153,7 @@ fi
 if [ "$welcome" == "Show Network Information" ]
 then
   showndetails=$(zenity --height=400 width=600 --list --checklist --title="Network Reconnect" --text="What information do you want in your report?" --column="Choice" --column="Information" "Wireless Network Interfaces" FALSE "Wired Network Interfaces" FALSE "Available Wireless Networks" FALSE "Current Wireless Network Status" FALSE "Current Wired Network Status")
+  report="Network Reconnect Report, generated on `date`:"
   if echo $showndetails | grep -q "Wireless Network Interfaces"
   then
     echo "wifini"
