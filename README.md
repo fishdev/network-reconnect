@@ -5,6 +5,6 @@ Network Reconnect is a utility designed to make managing wired and wireless netw
 
 The network-reconnect-extra branch is a package that provides several advanced features to users who require functionality beyond the scope of what network-reconnect itself is designed to offer. This way, most users can use the streamlined master utility, while power users can utilize this extra branch.
 
-Work on extra will begin after v0.3 of master.
+Work on extra will begin after the release [v0.3](https://github.com/fishdev/network-reconnect/issues?milestone=3) of master.
 
 This software utility is currently in active development, and we do not recommend that you use it in real-world production scenarios. Right now, there are plenty of [issues](https://github.com/fishdev/network-reconnect/issues), so please feel free to [contribute](https://github.com/fishdev/network-reconnect/pulls) if you want to help us out!
