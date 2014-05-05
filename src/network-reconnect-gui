@@ -152,26 +152,15 @@ fi
 
 if [ "$welcome" == "Show Network Information" ]
 then
-  showndetails=$(zenity --height=400 width=600 --list --checklist --title="Network Reconnect" --text="What information do you want in your report?" --column="Choice" --column="Information" "Wireless Network Interfaces" FALSE "Wired Network Interfaces" FALSE "Available Wireless Networks" FALSE "Current Wireless Network Status" FALSE "Current Wired Network Status")
-  report="Network Reconnect Report, generated on `date`:"
-  if echo $showndetails | grep -q "Wireless Network Interfaces"
+  showndetails=$(zenity width=600 --height=400 --list --checklist --title="Network Reconnect" --text="What type of report would you like to generate?" --column="Choice" --column="Information" "Quick and Simple" FALSE "Long and Detailed")
+  report="---Network Reconnect Report, generated on $(date)---\n\n"
+  if echo $showndetails | grep -q "Quick and Simple"
   then
-    echo "wifini"
+    report="$report This report will contain an overview of information about your computer's network interfaces and the connections you currently have active. However, report generation functionality has not yet been implemented in our GUI, so information is not available at this time. For the time being, use the network-reconnect-cli to take advantage of all of the features in network-reconnect."
   fi
-  if echo $showndetails | grep -q "Wired Network Interfaces"
+  if echo $showndetails | grep -q "Long and Detailed"
   then
-    echo "ethni"
+    report="$report This report will contain an overview of information about your computer's network interfaces and the connections you currently have active. However, report generation functionality has not yet been implemented in our GUI, so information is not available at this time. For the time being, use the network-reconnect-cli to take advantage of all of the features in network-reconnect."
   fi
-  if echo $showndetails | grep -q "Available Wireless Networks"
-  then
-    echo "awn"
-  fi
-  if echo $showndetails | grep -q "Current Wireless Network Status"
-  then
-    echo "cwifins"
-  fi
-  if echo $showndetails | grep -q "Current Wired Network Status"
-  then
-    echo "cethns"
-  fi
+  zenity --info --width=600 height=400 --title="Network-Reconnect" --text="$report"
 fi
