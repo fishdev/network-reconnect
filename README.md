@@ -11,6 +11,19 @@ I first created network-reconnect when my WiFi card was having issues with dropo
 * many mainstream computers have unreliable network interfaces that could use a simple reconnect script
 * other network connection utilities for Linux/UNIX have a lot of unnecessary overhead
 
+<h3>Features</h3>
+
+<p>We currently support a wide range of useful and easy-to-use features that are built right into network-reconnect, with even more cool functionality on the way. Here is a quick breakdown of the most notable features we offer:</p>
+
+<ul>
+<li>Two ways to use: GUI and CLI</li>
+<li>Management of basic wired and wirelss connections</li>
+<li>Simple and advanced report generation</li>
+<li>Automatic checking and refreshing of all connections</li>
+<li>Instant-on connection upon wakeup and bootup</li>
+<li>Extensive backend independent of interfaces</li>
+</ul>
+
 ### More Information
 
 If you want to know more about how to install and use network-reconnect, please see our [wiki](https://github.com/fishdev/network-reconnect/wiki).
