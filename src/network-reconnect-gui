@@ -156,6 +156,17 @@ then
   report="---Network Reconnect Report, generated on $(date)---\n\n"
   if echo $showndetails | grep -q "Quick and Simple"
   then
+    if [ -z $wifiinterface ] && [ -z $ethinterface ]
+    then
+      getWifiCard
+      if [ -z $wirelesscard ]
+      then
+        zenity --error --width=300 --height=200 --title="Network Reconnect" --text="No networking interfaces found. It appears that your computer does not have a networking controller."
+      else
+        zenity --error --width=300 --height=200 --title="Network Reconnect" --text="No networking interfaces found. Are you sure you have installed the appropriate drivers for your device?"
+      fi
+      exit
+    fi
     report="$report This report will contain an overview of information about your computer's network interfaces and the connections you currently have active. However, report generation functionality has not yet been implemented in our GUI, so information is not available at this time. For the time being, use the network-reconnect-cli to take advantage of all of the features in network-reconnect."
   fi
   if echo $showndetails | grep -q "Long and Detailed"
