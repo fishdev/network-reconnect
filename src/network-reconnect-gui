@@ -156,6 +156,8 @@ then
   report="---Network Reconnect Report, generated on $(date)---\n\n"
   if echo $showndetails | grep -q "Quick and Simple"
   then
+    getWifiInterface
+    getEthInterface
     if [ -z $wifiinterface ] && [ -z $ethinterface ]
     then
       getWifiCard
