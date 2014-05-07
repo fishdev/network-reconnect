@@ -81,22 +81,27 @@ ethDisconnect() {
   ip link set $ethinterface down
 }
 
+# Echo detailed information about wireless interface
 infoWifiInterface() {
   ifconfig $wifiinterface
 }
 
+# Echo current status of wireless interface
 statusWifiInterface() {
   iw dev $wifiinterface link
 }
 
+# Echo detailed information about wired interface
 infoEthInterface() {
   ifconfig $ethinterface
 }
 
+# Echo current status of wired interface
 statusEthInterface() {
   iw dev $ethinterface link
 }
 
+# Enable wireless connection at boot [requires systemd]
 wifiEnable() {
   echo "[Unit]
 Description=Network Reconnect
@@ -109,6 +114,7 @@ WantedBy=multi-user.target" > /etc/systemd/system/network-reconnect.service
   systemctl enable network-reconnect.service
 }
 
+# Enable wired connection at boot [requires systemd]
 ethEnable() {
   echo "[Unit]
 Description=Network Reconnect
@@ -121,20 +127,27 @@ WantedBy=multi-user.target" > /etc/systemd/system/network-reconnect.service
   systemctl enable network-reconnect.service
 }
 
+# Backend used to interact with other parts of network-reconnect
 case "$1" in
+  # --backend flag must be issued
   --backend)
+    # Direct integration for network-checker
     if [ $2 == "checker" ]
     then
+      # Import passed variables
       wifiinterface=$3
       networkssid=$4
       networkkey=$5
       successcount=$6
       failcount=$7
       timetosleep=$8
+      # Identify kernel module used for wireless connections in $kernelmodule
       lspciwireless=`lspci -k | grep -i -A 3 wireless`
       kernelmoduleline=`echo $lspciwireless | grep -o -P '.{0,0}modules.{0,100}'`
       kernelmodule=`echo $kernelmoduleline | grep -o -P '.{0,0} .{0,100}'`
+      # Echo error to log
       echo "Background daemon stopped due to excessive failure. Trying to restart..." >> /var/log/network-reconnect.log
+      # Attempt to reinitiate connection
       killall dhcpcd
       iw dev $wifiinterface disconnect
       ip link set $wifiinterface down
@@ -153,7 +166,9 @@ case "$1" in
       fi
       killall dhcpcd
       dhcpcd $wifiinterface
+      # Restart network-checker
       network-checker $wifiinterface $networkssid $networkkey $successcount $failcount $timetosleep &
+      # Echo information to log
       echo -e "${green}${bold}Background daemon started.${normal}${nocolor}"
     fi
   ;;
