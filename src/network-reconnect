@@ -67,14 +67,17 @@ wifiConnect() {
   dhcpcd $wifiinterface
 }
 
-# Disconnect from a wireless network (affected by issue #1) [requires getWifiInterface()]
+# Disconnect from wireless networks and deactivate wireless interface (affected by issue #1) [requires getWifiInterface()]
 wifiDisconnect() {
   killall dhcpcd
   iw dev $wifiinterface disconnect
   ip link set $wifiinterface down
 }
 
+# Disconnect from wired networks and deactivate wired interface [requires getEthInterface()]
 ethDisconnect() {
+  killall dhcpcd
+  iw dev $ethinterface disconnect
   ip link set $ethinterface down
 }
 
