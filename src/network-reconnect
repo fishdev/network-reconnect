@@ -142,22 +142,18 @@ case "$1" in
       failcount=$7
       timetosleep=$8
       # Identify kernel module used for wireless connections in $kernelmodule
-      lspciwireless=`lspci -k | grep -i -A 3 wireless`
-      kernelmoduleline=`echo $lspciwireless | grep -o -P '.{0,0}modules.{0,100}'`
-      kernelmodule=`echo $kernelmoduleline | grep -o -P '.{0,0} .{0,100}'`
+      getKernelModule
       # Echo error to log
       echo "Background daemon stopped due to excessive failure. Trying to restart..." >> /var/log/network-reconnect.log
       # Attempt to reinitiate connection
-      killall dhcpcd
-      iw dev $wifiinterface disconnect
-      ip link set $wifiinterface down
+      wifiDisconnect
       modprobe -r $kernelmodule
       rfkill block all
       rfkill unblock all
       modprobe $kernelmodule
-      ip link set $wifiinterface down
-      ip link set $wifiinterface up
-      iw dev $wifiinterface disconnect
+      wifiDisconnect
+      wifiInterfaceUp
+      wifiDisconnect
       if [ -z $networkkey ]
       then
         iw dev $wifiinterface connect $networkssid
