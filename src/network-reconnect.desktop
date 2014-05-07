@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Network Reconnect
+Comment=A utility designed to make managing wired and wireless connections easy
 Icon=/usr/share/pixmaps/network-reconnect.png
 Type=Application
 Exec=network-reconnect-gui
