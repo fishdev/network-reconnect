@@ -1,16 +1,19 @@
 #!/bin/bash
 
+# Identify kernel module used for wireless connections in $kernelmodule
 getKernelModule() {
   lspciwireless=`lspci -k | grep -i -A 3 wireless`
   kernelmoduleline=`echo $lspciwireless | grep -o -P '.{0,0}modules.{0,100}'`
   kernelmodule=`echo $kernelmoduleline | grep -o -P '.{0,0} .{0,100}'`
 }
 
+# Identify exact wireless adapter model in $wirelesscard
 getWifiCard() {
   lspciwireless=`lspci -k | grep -i wireless`
   wirelesscard=`echo $lspciwireless | grep -o -P '.{0,0}Network controller.{0,100}'`
 }
 
+# Identify availalbe wireless interface in $wifiinterface
 getWifiInterface() {
   if ip link | grep -q "wlan0"
   then
@@ -26,6 +29,7 @@ getWifiInterface() {
   fi
 }
 
+# Identify available wired interface in $ethinterface
 getEthInterface() {
   if ip link | grep -q "eth0"
   then
@@ -37,18 +41,22 @@ getEthInterface() {
   fi
 }
 
+# Activate wireless interface [requires getWifiInterface()]
 wifiInterfaceUp() {
   ip link set $wifiinterface up
 }
 
+# Activate wired interface [requires getEthInterface()]
 ethInterfaceUp() {
   ip link set $ethinterface up
 }
 
+# Scan area for wireless networks and echoes list [requires getWifiInterface() and wifiInterfaceUp()]
 getNetworkSSID() {
   iw dev $wifiinterface scan | grep SSID
 }
 
+# Connect to a wireless network (affected by issue #1) [requires getWifiInterface(), wifiInterfaceUp(), $networkssid, and $networkkey]
 wifiConnect() {
   if [ -z $networkkey ]
   then
@@ -59,6 +67,7 @@ wifiConnect() {
   dhcpcd $wifiinterface
 }
 
+# Disconnect from a wireless network (affected by issue #1) [requires getWifiInterface()]
 wifiDisconnect() {
   killall dhcpcd
   iw dev $wifiinterface disconnect
