@@ -57,7 +57,7 @@ then
 fi
 if [ "$distribution" == "Arch" ]
 then
-  sudo pacman -S iproute2 coreutils pciutils grep iputils iw
+  sudo pacman -S iproute2 coreutils pciutils grep iputils iw wpa_supplicant
   if [[ -z $(pacman -Q iproute2) ]] || [[ -z $(pacman -Q coreutils) ]] || [[ -z $(pacman -Q pciutils) ]] || [[ -z $(pacman -Q grep) ]] || [[ -z $(pacman -Q iputils) ]] || [[ -z $(pacman -Q iw) ]] || [[ -z $(pacman -Q wpa_supplicant) ]]
   then
     echo -e "The required dependencies could not be installed. Perhaps you are not connected to the Internet or your system has conflicting programs installed.${normal}${nocolor}"
