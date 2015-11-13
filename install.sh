@@ -39,8 +39,8 @@ fi
 echo -e "${purple}${bold}Now installing dependencies for network-reconnect...${normal}${nocolor}"
 if [ "$distribution" == "Ubuntu" ]
 then
-  sudo apt-get install --yes --force-yes iproute2 coreutils pciutils grep iputils-ping iw > /dev/null
-  if [ -z $(sudo dpkg-query -l "iproute2") ] || [ -z $(sudo dpkg-query -l "coreutils") ] || [ -z $(sudo dpkg-query -l "pciutils") ] || [ -z $(sudo dpkg-query -l "grep") ] || [ -z $(sudo dpkg-query -l "iputils-ping") ] || [ -z $(sudo dpkg-query -l "iw") ]
+  sudo apt-get install --yes --force-yes iproute2 coreutils pciutils grep iputils-ping iw wpa_supplicant > /dev/null
+  if [ -z $(sudo dpkg-query -l "iproute2") ] || [ -z $(sudo dpkg-query -l "coreutils") ] || [ -z $(sudo dpkg-query -l "pciutils") ] || [ -z $(sudo dpkg-query -l "grep") ] || [ -z $(sudo dpkg-query -l "iputils-ping") ] || [ -z $(sudo dpkg-query -l "iw") ] || [ -z $(sudo dpkg-query -l "wpa_supplicant") ]
   then
     echo -e "The required dependencies could not be installed. Perhaps you are not connected to the Internet or your system has conflicting programs installed.${normal}${nocolor}"
     exit
@@ -48,8 +48,8 @@ then
 fi
 if [ "$distribution" == "Fedora" ] || [ "$distribution" == "CentOS" ]
 then
-  sudo yum install iproute coreutils pciutils grep iputils iw
-  if [ -z $(rpm -qa | grep -w "iproute") ] || [ -z $(rpm -qa | grep -w "coreutils") ] || [ -z $(rpm -qa | grep -w "pciutils") ] || [ -z $(rpm -qa | grep -w "grep") ] || [ -z $(rpm -qa | grep -w "iputils") ] || [ -z $(rpm -qa | grep -w "iw") ]
+  sudo yum install iproute coreutils pciutils grep iputils iw wpa_supplicant
+  if [ -z $(rpm -qa | grep -w "iproute") ] || [ -z $(rpm -qa | grep -w "coreutils") ] || [ -z $(rpm -qa | grep -w "pciutils") ] || [ -z $(rpm -qa | grep -w "grep") ] || [ -z $(rpm -qa | grep -w "iputils") ] || [ -z $(rpm -qa | grep -w "iw") ] || [ -z $(rpm -qa | grep -w "wpa_supplicant") ]
   then
     echo -e "The required dependencies could not be installed. Perhaps you are not connected to the Internet or your system has conflicting programs installed.${normal}${nocolor}"
     exit
@@ -58,7 +58,7 @@ fi
 if [ "$distribution" == "Arch" ]
 then
   sudo pacman -S iproute2 coreutils pciutils grep iputils iw
-  if [[ -z $(pacman -Q iproute2) ]] || [[ -z $(pacman -Q coreutils) ]] || [[ -z $(pacman -Q pciutils) ]] || [[ -z $(pacman -Q grep) ]] || [[ -z $(pacman -Q iputils) ]] || [[ -z $(pacman -Q iw) ]]
+  if [[ -z $(pacman -Q iproute2) ]] || [[ -z $(pacman -Q coreutils) ]] || [[ -z $(pacman -Q pciutils) ]] || [[ -z $(pacman -Q grep) ]] || [[ -z $(pacman -Q iputils) ]] || [[ -z $(pacman -Q iw) ]] || [[ -z $(pacman -Q wpa_supplicant) ]]
   then
     echo -e "The required dependencies could not be installed. Perhaps you are not connected to the Internet or your system has conflicting programs installed.${normal}${nocolor}"
     exit
