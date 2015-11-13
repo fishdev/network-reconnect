@@ -44,7 +44,7 @@ case "$1" in
             getNetworkSSID
             echo -e "${purple}${bold}Enter a network name (SSID) from above: ${normal}${nocolor}"
             read networkssid
-            echo -e "${purple}${bold}Enter the network password (authenication key): ${normal}${nocolor}"
+            echo -e "${purple}${bold}Enter the network password (authentication key): ${normal}${nocolor}"
             read networkkey
             wifiConnect
             echo -e "${purple}${bold}Local IP information:${normal}${purple}"

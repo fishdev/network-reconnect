@@ -15,7 +15,7 @@ normal=`tput sgr0`
 echo -e "${blue}${bold}Network Reconnect is a utility designed to make managing wired and wireless connections easy. It is not nearly complete or feature-complete, and only WEP and standard Ethernet are supported at this time. You are currently using the installer.${normal}${nocolor}"
 
 # Get distribution
-distribution=(grep DISTRIB_ID</etc/lsb-release|cut -d = -f 2)
+distribution=`grep DISTRIB_ID < /etc/lsb-release | cut -d = -f 2`
 if [ -z "$distribution" ]
 then
   distribution=$(uname -s)
