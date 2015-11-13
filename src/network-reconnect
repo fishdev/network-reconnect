@@ -25,7 +25,7 @@ getEthInterface() {
 
 # Activate wireless interface [requires getWifiInterface()]
 wifiInterfaceUp() {
-  sudo ip link set $wifiinterface up
+  ip link set $wifiinterface up
 }
 
 # Activate wired interface [requires getEthInterface()]
