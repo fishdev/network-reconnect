@@ -15,7 +15,7 @@ normal=`tput sgr0`
 echo -e "${blue}${bold}Network Reconnect is a utility designed to make managing wired and wireless connections easy. It is not nearly complete or feature-complete, and only WEP and standard Ethernet are supported at this time. You are currently using the installer.${normal}${nocolor}"
 
 # Get distribution
-distribution=$DISTRIB_ID
+distribution=(grep DISTRIB_ID</etc/lsb-release|cut -d = -f 2)
 if [ -z "$distribution" ]
 then
   distribution=$(uname -s)
@@ -26,6 +26,7 @@ then
   echo -e "${red}grep${nocolor}"
   echo -e "${red}ping${nocolor}"
   echo -e "${red}iw${nocolor}"
+  echo -e "${red}wpa_supplicant${nocolor}"
   echo -e "${red}${bold}If you cannot install these packages, your distribution might be completely unsupported.${normal}${nocolor}"
   exit
 fi
@@ -49,6 +50,15 @@ if [ "$distribution" == "Fedora" ] || [ "$distribution" == "CentOS" ]
 then
   sudo yum install iproute coreutils pciutils grep iputils iw
   if [ -z $(rpm -qa | grep -w "iproute") ] || [ -z $(rpm -qa | grep -w "coreutils") ] || [ -z $(rpm -qa | grep -w "pciutils") ] || [ -z $(rpm -qa | grep -w "grep") ] || [ -z $(rpm -qa | grep -w "iputils") ] || [ -z $(rpm -qa | grep -w "iw") ]
+  then
+    echo -e "The required dependencies could not be installed. Perhaps you are not connected to the Internet or your system has conflicting programs installed.${normal}${nocolor}"
+    exit
+  fi
+fi
+if [ "$distribution" == "Arch" ]
+then
+  sudo pacman -S iproute2 coreutils pciutils grep iputils iw
+  if [[ -z $(pacman -Q iproute2) ]] || [[ -z $(pacman -Q coreutils) ]] || [[ -z $(pacman -Q pciutils) ]] || [[ -z $(pacman -Q grep) ]] || [[ -z $(pacman -Q iputils) ]] || [[ -z $(pacman -Q iw) ]]
   then
     echo -e "The required dependencies could not be installed. Perhaps you are not connected to the Internet or your system has conflicting programs installed.${normal}${nocolor}"
     exit
