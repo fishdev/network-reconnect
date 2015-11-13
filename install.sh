@@ -36,7 +36,6 @@ fi
 
 # Install dependency packages
 echo -e "${purple}${bold}Now installing dependencies for network-reconnect...${normal}${nocolor}"
-echo -e "$(red}${bold}"
 if [ "$distribution" == "Ubuntu" ]
 then
   sudo apt-get install --yes --force-yes iproute2 coreutils pciutils grep iputils-ping iw > /dev/null
@@ -49,25 +48,23 @@ fi
 if [ "$distribution" == "Fedora" ] || [ "$distribution" == "CentOS" ]
 then
   sudo yum install iproute coreutils pciutils grep iputils iw
-  if [ -z ${rpm -qa | grep -w "iproute" ] || [ -z ${rpm -qa | grep -w "coreutils" ] || [ -z ${rpm -qa | grep -w "pciutils" ] || [ -z ${rpm -qa | grep -w "grep" ] || [ -z ${rpm -qa | grep -w "iputils" ] || [ -z ${rpm -qa | grep -w "iw" ]
+  if [ -z $(rpm -qa | grep -w "iproute") ] || [ -z $(rpm -qa | grep -w "coreutils") ] || [ -z $(rpm -qa | grep -w "pciutils") ] || [ -z $(rpm -qa | grep -w "grep") ] || [ -z $(rpm -qa | grep -w "iputils") ] || [ -z $(rpm -qa | grep -w "iw") ]
   then
     echo -e "The required dependencies could not be installed. Perhaps you are not connected to the Internet or your system has conflicting programs installed.${normal}${nocolor}"
     exit
   fi
 fi
-echo -e "${normal}${nocolor}"
-
 # Move binaries into filesystem
 echo -e "${purple}${bold}Now copying files to your system...${normal}${nocolor}"
-echo -e "$(red}${bold}"
-sudo mv src/network-checker src/network-reconnect src/network-reconnect src/network-reconnect-cli src/network-reconnect-gui /usr/bin/
-sudo mv src/network-reconnect.desktop /usr/share/applications/
-sudo mv src/network-reconnect.png /usr/share/pixmaps/
-if [ -z $(ls /usr/bin/ | grep -w "network-checker") ] || [ -z $(ls /usr/bin/ | grep -w "network-reconnect") ] || [ -z $(ls /usr/bin/ | grep -w "network-reconnect-cli") ] || [ -z $(ls /usr/bin/ | grep -w "network-reconnect-gui") ] || [ -z $(ls /usr/share/applications/ | grep -w "network-reconnect.desktop") ] || [ -z $(ls /usr/share/pixmaps | grep -w "network-reconnect.png") ]
+sudo cp src/network-checker src/network-reconnect src/network-reconnect-cli src/network-reconnect-gui /usr/bin/
+sudo cp src/network-reconnect.desktop /usr/share/applications/
+sudo cp src/network-reconnect.png /usr/share/pixmaps/
+if [[ -z $(ls /usr/bin/ | grep -w "network-checker") ]] || [[ -z $(ls /usr/bin/ | grep -w "network-reconnect") ]] || [[ -z $(ls /usr/bin/ | grep -w "network-reconnect-cli") ]] || [[ -z $(ls /usr/bin/ | grep -w "network-reconnect-gui") ]] || [[ -z $(ls /usr/share/applications/ | grep -w "network-reconnect.desktop") ]] || [[ -z $(ls /usr/share/pixmaps | grep -w "network-reconnect.png") ]]
 then
   echo -e "The network-reconnect files could not be copied. Please make sure that you can write to your filesystem, or copy the files manually.${normal}${nocolor}"
   exit
-echo -e "${normal}${nocolor}"
+else
+  # Display success message
+  echo -e "${green}${bold}All done! You're ready to use network-reconnect. Type 'network-reconnect-cli --help' for more information.${normal}${nocolor}"
+fi
 
-# Display success message
-echo -e "${green}${bold}All done! You're ready to use network-reconnect. Type 'network-reconnect-cli --help' for more information.${normal}${nocolor}"
