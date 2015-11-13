@@ -10,7 +10,7 @@ nocolor='\e[0m'
 bold=`tput bold`
 normal=`tput sgr0`
 echo -e "${blue}${bold}Network Reconnect is a utility designed to make managing wired and wireless connections easy. It is not nearly complete or feature-complete, and only WEP and standard Ethernet are supported at this time. You are currently using the CLI (Command-Line Interface).${normal}${nocolor}"
-
+echo -e "${red}${bold}In case you are not doing so already, please run Network Reconenct as root. Most functionality will not work as a regular user."
 case "$1" in
   -a|--automatic)
     case "$2" in
