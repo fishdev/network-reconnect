@@ -15,30 +15,12 @@ getWifiCard() {
 
 # Identify availalbe wireless interface in $wifiinterface
 getWifiInterface() {
-  if ip link | grep -q "wlan0"
-  then
-    wifiinterface=wlan0
-  fi
-  if ip link | grep -q "wlp3s0"
-  then
-    wifiinterface=wlp3s0
-  fi
-  if ip link | grep -q "wlo1"
-  then
-    wifiinterface=wlo1
-  fi
+  wifiinterface=`ip addr | grep -m 1 -o -e "w[^:]*"`
 }
 
 # Identify available wired interface in $ethinterface
 getEthInterface() {
-  if ip link | grep -q "eth0"
-  then
-    ethinterface=eth0
-  fi
-  if ip link | grep -q "enp4s0"
-  then
-    ethinterface=enp4s0
-  fi
+  ethinterface=`ip addr | grep -m 1 -o -e "e[^:]*"`
 }
 
 # Activate wireless interface [requires getWifiInterface()]
@@ -62,7 +44,19 @@ wifiConnect() {
   then
     iw dev $wifiinterface connect $networkssid
   else
-    iw dev $wifiinterface connect $networkssid key 0:$networkkey
+    while [ "$securitytype" != "WPA2" ] && [ "$securitytype" != "wpa2" ] && [ "$securitytype" != "WPA" ] && [ "$securitytype" != "wpa" ] && [ "$securitytype" != "WEP" ] && [ "$securitytype" != "wep" ];
+    do
+      echo -e "${red}${bold}Please specify whether this network uses WEP or WPA/WPA2: "
+      read securitytype;
+    done
+    if [ "$securitytype" == "WPA2" ] || [ "$securitytype" == "WPA" ] || [ "$securitytype" == "wpa2" ] || [ "$securitytype" == "wpa" ]
+    then
+      set +H
+      wpa_supplicant -B -i $wifiinterface -c <(wpa_passphrase "$networkssid" "$networkkey")
+      set -H
+    else
+      iw dev $wifiinterface connect $networkssid key 0:$networkkey
+    fi
   fi
   dhcpcd $wifiinterface
 }

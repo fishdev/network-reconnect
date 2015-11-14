@@ -9,8 +9,12 @@ purple='\e[0;35m'
 nocolor='\e[0m'
 bold=`tput bold`
 normal=`tput sgr0`
-echo -e "${blue}${bold}Network Reconnect is a utility designed to make managing wired and wireless connections easy. It is not nearly complete or feature-complete, and only WEP and standard Ethernet are supported at this time. You are currently using the CLI (Command-Line Interface).${normal}${nocolor}"
-
+echo -e "${blue}${bold}Network Reconnect is a utility designed to make managing wired and wireless connections easy. It is not nearly complete or feature-complete, and only WEP, WPA, WPA2, and standard Ethernet are supported at this time. You are currently using the CLI (Command-Line Interface).${normal}${nocolor}"
+if [ "$EUID" != "0" ] || [ -n "$SUDO_COMMAND" ]
+then
+  echo -e "${red}${bold}You are not running Network Reconnect as root. Network Reconnect will not function as intended if running under sudo or as a regular user.${normal}${nocolor}"
+  exit 1
+fi
 case "$1" in
   -a|--automatic)
     case "$2" in
@@ -44,8 +48,9 @@ case "$1" in
             getNetworkSSID
             echo -e "${purple}${bold}Enter a network name (SSID) from above: ${normal}${nocolor}"
             read networkssid
-            echo -e "${purple}${bold}Enter the network password (authenication key): ${normal}${nocolor}"
+            echo -e "${purple}${bold}Enter the network password (authentication key), or leave blank if not applicable: ${normal}${nocolor}"
             read networkkey
+            securitytype="default"
             wifiConnect
             echo -e "${purple}${bold}Local IP information:${normal}${purple}"
             if ifconfig $wifiinterface | grep 192.168.1.
@@ -132,7 +137,7 @@ case "$1" in
         fi
       ;;
       *)
-        if [ "$2" == "wlan0" ] || [ "$2" == "wlp3s0" ] || [ "$2" == "wlo1" ]
+        if [ grep -e "^w{^ }*" <(echo $2) ]
         then
           wifiinterface=$2
           if ifconfig $wifiinterface | grep 192.168.1.
@@ -144,7 +149,7 @@ case "$1" in
           echo -e "${purple}${bold}Sending interface" $wifiinterface "down...${normal}${nocolor}"
           wifiDisconnect
         else
-          if [ "$2" == "eth0" ] || [ "$2" == "enp4s0" ]
+          if [ grep -e "^e{^ }*" <(echo $2) ]
           then
             ethinterface=$2
             if ifconfig $ethinterface | grep 192.168.1.
@@ -183,7 +188,7 @@ case "$1" in
         echo -e "${red}${bold}Invalid argument. Please specify networking interface.${normal}${nocolor}"
       ;;
       *)
-        if [ "$2" == "wlan0" ] || [ "$2" == "wlp3s0" ] || [ "$2" == "wlo1" ]
+        if [ grep -e "^w{^ }*" <(echo $2) ]
         then
           case "$3" in
             "")
@@ -192,7 +197,7 @@ case "$1" in
             *)
               case "$4" in
                 "")
-                  echo -e "${red}${bold}Invalid argument. Please specify the network password (authenication key).${normal}${nocolor}"
+                  echo -e "${red}${bold}Invalid argument. Please specify the network password (authentication key).${normal}${nocolor}"
                 ;;
                 *)
                   wifiinterface=$2
@@ -205,7 +210,7 @@ case "$1" in
             ;;
           esac
         else
-          if [ "$2" == "eth0" ] || [ "$2" == "enp4s0" ]
+          if [ grep -e "^e{^ }*" <(echo $2) ]
           then
             ethinterface=$2
             ethEnable
@@ -320,7 +325,7 @@ case "$1" in
         echo -e "${red}${bold}Invalid argument. Please specify networking interface.${normal}${nocolor}"
       ;;
       *)
-        if [ "$2" == "wlan0" ] || [ "$2" == "wlp3s0" ] || [ "$2" == "wlo1" ]
+        if [ grep -e "^w{^ }*" <(echo $2) ]
         then
           case "$3" in
             "")
@@ -385,7 +390,7 @@ case "$1" in
             ;;
           esac
         else
-          if [ "$2" == "eth0" ] || [ "$2" == "enp4s0" ]
+          if [ grep -e "^e{^ }*" <(echo $2) ]
           then
             ethinterface=$2
             echo -e "${purple}${bold}Selecting interface" $ethinterface"...${normal}${nocolor}"
@@ -469,7 +474,7 @@ case "$1" in
         fi
       ;;
       *)
-        if [ "$2" == "wlan0" ] || [ "$2" == "wlp3s0" ] || [ "$2" == "wlo1" ]
+        if [ grep -e "^w{^ }*" <(echo $2) ]
         then
           wifiinterface=$2
           echo -e "${purple}${bold}Interface status for" $wifiinterface":${normal}${purple}"
@@ -477,7 +482,7 @@ case "$1" in
           echo -e "${purple}${bold}Detailed network status for" $wifiinterface":${normal}${purple}"
           statusWifiInterface
         else
-          if [ "$2" == "eth0" ] || [ "$2" == "enp4s0" ]
+          if [ grep -e "^e{^ }*" <(echo $2) ]
           then
             ethinterface=$2
             echo -e "${purple}${bold}Interface status for" $ethinterface":${normal}${purple}"
