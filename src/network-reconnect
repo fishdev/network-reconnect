@@ -13,7 +13,7 @@ getWifiCard() {
   wirelesscard=`echo $lspciwireless | grep -o -P '.{0,0}Network controller.{0,100}'`
 }
 
-# Identify availalbe wireless interface in $wifiinterface
+# Identify available wireless interface in $wifiinterface
 getWifiInterface() {
   wifiinterface=`ip addr | grep -m 1 -o -e "w[^:]*"`
 }
