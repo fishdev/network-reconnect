@@ -1,8 +1,18 @@
 #!/bin/bash
-
 source network-reconnect
-
-welcome=$(zenity --list --title="Network Reconnect" --height=400 --text "Welcome to network-reconnect, a utility designed to make\nmanaging wired and wireless easy. It is not nearly complete\nor feature-complete, and only WEP and standard Ethernet\nare supported at this time. You are currently using the GUI\n(Graphical User Interface). What would you like to do?" --radiolist  --column="Choice" --column="Command" TRUE "Connect to a Network" FALSE "Disconnect From a Network" FALSE "Show Network Information" FALSE "Configure Network Reconnect" FALSE "Go to the Network Reconnect Shell")
+red='\e[0;31m'
+green='\e[0;32m'
+blue='\e[0;36m'
+purple='\e[0;35m'
+nocolor='\e[0m'
+bold=`tput bold`
+normal=`tput sgr0`
+if [ "$EUID" != "0" ] || [ -n "$SUDO_COMMAND" ]
+then
+  echo -e "${red}${bold}You are not running Network Reconnect as root. Network Reconnect will not function as intended if running under sudo or as a regular user."
+  exit 1
+fi
+welcome=$(zenity --list --title="Network Reconnect" --height=400 --text "Welcome to network-reconnect, a utility designed to make\nmanaging wired and wireless easy. It is not nearly complete\nor feature-complete, and only WEP, WPA, WPA2, and standard Ethernet\nare supported at this time. You are currently using the GUI\n(Graphical User Interface). What would you like to do?" --radiolist  --column="Choice" --column="Command" TRUE "Connect to a Network" FALSE "Disconnect From a Network" FALSE "Show Network Information" FALSE "Configure Network Reconnect" FALSE "Go to the Network Reconnect Shell")
 
 if [ "$welcome" == "Connect to a Network" ]
 then
@@ -26,7 +36,13 @@ then
     wifiInterfaceUp
     wifinetworks=`getNetworkSSID`
     networkssid=$(zenity --entry --title="Network Reconnect" --text="Available wireless networks:\n$wifinetworks\nPlease enter the name of one:")
-    networkkey=$(zenity --password --title="Network Reconnect")
+    securitytype=$(zenity --list --title="Network Reconnect" --text "Select network security type:" --radiolist --column "Selection" --column "Security type" TRUE "None" FALSE "WPA" FALSE "WPA2" FALSE "WEP")
+    if [ "$securitytype" == "WEP" ] || [ "$securitytype" == "WPA2" ] || [ "$securitytype" == "WPA" ]
+    then
+      networkkey=$(zenity --password --title="Network Reconnect")
+    else
+      networkkey=""
+    fi
     wifiConnect
     if ifconfig $wifiinterface | grep -q 192.168.1.
     then

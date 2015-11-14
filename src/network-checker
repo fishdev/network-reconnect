@@ -41,14 +41,7 @@ while true; do
     ip link set $wifiinterface down
     rfkill block all
     rfkill unblock all
-    ip link set $wifiinterface up
-    if [ -z $networkkey ]
-    then
-      iw dev $wifiinterface connect $networkssid
-    else
-      iw dev $wifiinterface connect $networkssid key 0:$networkkey
-    fi
-    dhcpcd $wifiinterface
+    wifiConnect
     if ifconfig $wifiinterface | grep -q 192.168.1
     then
       echo "["$(date)"]" "Successfully reconnected." >> /var/log/network-reconnect.log
@@ -56,14 +49,8 @@ while true; do
       ip link set $wifiinterface down
       ip link set $wifiinterface up
       iw dev $wifiinterface disconnect
-      if [ -z $networkkey ]
-      then
-        iw dev $wifiinterface connect $networkssid
-      else
-        iw dev $wifiinterface connect $networkssid key 0:$networkkey
-      fi
       killall dhcpcd
-      dhcpcd $wifiinterface
+      wifiConnect
       failcount=`expr $failcount + 1`
       if ifconfig $wifiinterface | grep -q 192.168.1
       then

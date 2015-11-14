@@ -12,7 +12,7 @@ purple='\e[0;35m'
 nocolor='\e[0m'
 bold=`tput bold`
 normal=`tput sgr0`
-echo -e "${blue}${bold}Network Reconnect is a utility designed to make managing wired and wireless connections easy. It is not nearly complete or feature-complete, and only WEP and standard Ethernet are supported at this time. You are currently using the installer.${normal}${nocolor}"
+echo -e "${blue}${bold}Network Reconnect is a utility designed to make managing wired and wireless connections easy. It is not nearly complete or feature-complete, and only WEP, WPA, WPA2, and standard Ethernet are supported at this time. You are currently using the installer.${normal}${nocolor}"
 
 # Get distribution
 distribution=`grep DISTRIB_ID < /etc/lsb-release | cut -d = -f 2`
@@ -76,5 +76,6 @@ then
 else
   # Display success message
   echo -e "${green}${bold}All done! You're ready to use network-reconnect. Type 'network-reconnect-cli --help' for more information.${normal}${nocolor}"
+  echo -e "${purple}${bold}Please disable all other network managers before using network-reconnect. Multiple network managers trying to access the same resources can cause issues!"
 fi
 

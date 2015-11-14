@@ -44,7 +44,19 @@ wifiConnect() {
   then
     iw dev $wifiinterface connect $networkssid
   else
-    iw dev $wifiinterface connect $networkssid key 0:$networkkey
+    while [ "$securitytype" != "WPA2" ] && [ "$securitytype" != "wpa2" ] && [ "$securitytype" != "WPA" ] && [ "$securitytype" != "wpa" ] && [ "$securitytype" != "WEP" ] && [ "$securitytype" != "wep" ];
+    do
+      echo -e "${red}${bold}Please specify whether this network uses WEP or WPA/WPA2: "
+      read securitytype;
+    done
+    if [ "$securitytype" == "WPA2" ] || [ "$securitytype" == "WPA" ] || [ "$securitytype" == "wpa2" ] || [ "$securitytype" == "wpa" ]
+    then
+      set +H
+      wpa_supplicant -B -i $wifiinterface -c <(wpa_passphrase "$networkssid" "$networkkey")
+      set -H
+    else
+      iw dev $wifiinterface connect $networkssid key 0:$networkkey
+    fi
   fi
   dhcpcd $wifiinterface
 }
